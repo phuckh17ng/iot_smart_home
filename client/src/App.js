@@ -1,12 +1,24 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
+
+import BedRoomScreen from "./screen/BedRoomScreen";
 import HomeScreen from "./screen/HomeScreen";
+import KitchenScreen from "./screen/KitchenScreen";
+import LivingRoomScreen from "./screen/LivingRoomScreen";
 function App() {
 	return (
-		<div className="App">
+		<Router>
 			<Navbar />
-			<HomeScreen />
-		</div>
+			<main className="App">
+				<Routes>
+					<Route exact path="/" element={<HomeScreen />} />
+					<Route exact path="/livingroom" element={<LivingRoomScreen />} />
+					<Route exact path="/bedroom" element={<BedRoomScreen />} />
+					<Route exact path="/kitchen" element={<KitchenScreen />} />
+				</Routes>
+			</main>
+		</Router>
 	);
 }
 
