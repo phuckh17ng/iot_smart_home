@@ -38,7 +38,7 @@ const LivingRoomScreen = () => {
 	};
 
 	//fetch data from adafruit server
-	const AIO_KEY = '...'; //zalo to get this key
+	const AIO_KEY = 'aio_llTl02xfi41W52eJiJT5zytl7LV1'; //zalo to get this key
   	const AIO_USERNAME = 'tamquattnb123';
 	
 	//latest temperature in real time
@@ -187,7 +187,7 @@ const LivingRoomScreen = () => {
 		<div className="w-full h-[100%] bg-slate-200">
 			<div className="w-full pt-16">
 				<div className="w-[90%] h-full bg-white z-20 rounded-3xl drop-shadow-xl px-6 mx-auto">
-					<div className="flex items-end w-full pt-3">
+					<div className="flex items-end w-full pt-3 justify-center">
 						<img
 							src={require("../img/icons8-living-room-64 (1).png")}
 							alt="livingroom"
@@ -215,8 +215,8 @@ const LivingRoomScreen = () => {
 
 						<div className="mt-5 w-full grid">
 							<LineChart className="place-self-center w-full" 
-							width={800}
-							height={400}
+							width={window.innerWidth <= 1024? 400: 800}
+							height={window.innerWidth <= 1024? 200: 400}
 							data={DHT20TempGraph}
 							>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -245,8 +245,8 @@ const LivingRoomScreen = () => {
 
 						<div className="mt-5 w-full grid">
 							<LineChart className="place-self-center w-full" 
-							width={800}
-							height={400}
+							width={window.innerWidth <= 1024? 400: 800}
+							height={window.innerWidth <= 1024? 200: 400}
 							data={DHT20HumiGraph}
 							>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -275,8 +275,8 @@ const LivingRoomScreen = () => {
 
 						<div className="mt-5 w-full grid">
 							<LineChart className="place-self-center w-full" 
-							width={800}
-							height={400}
+							width={window.innerWidth <= 1024? 400: 800}
+							height={window.innerWidth <= 1024? 200: 400}
 							data={lightGraph}
 							>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -289,7 +289,7 @@ const LivingRoomScreen = () => {
 						</div>
 					</div>
 
-					<div className="flex pb-12 mt-5">
+					<div className="flex pb-12 mt-10">
 						<div className="w-[250px] h-[130px] bg-white z-20 rounded-3xl shadow-[0px_3px_6px_rgba(0,0,0,0.16),0px_3px_6px_rgba(0,0,0,0.23)] px-6 mx-auto">
 							<div className="w-full text-center text-2xl py-4">
 								Air Conditioner

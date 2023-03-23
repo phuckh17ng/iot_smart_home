@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const LivingRoom = () => {
 	//fetch data from adafruit server
-	const AIO_KEY = '...'; //zalo to get this key
+	const AIO_KEY = 'aio_llTl02xfi41W52eJiJT5zytl7LV1'; //zalo to get this key
   	const AIO_USERNAME = 'tamquattnb123';
 	//latest temperature in real time
 	const [DHT20Temp, setDHT20Temp] = useState(null);
