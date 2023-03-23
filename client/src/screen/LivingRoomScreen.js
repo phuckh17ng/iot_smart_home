@@ -38,97 +38,113 @@ const LivingRoomScreen = () => {
 	};
 
 	//fetch data from adafruit server
-	const AIO_KEY = '...'; //zalo to get this key
+	const AIO_KEY = 'aio_xCsl147xOTXnCvbhL2lZu9IgpEO9'; //zalo to get this key
   	const AIO_USERNAME = 'tamquattnb123';
 	
-	//latest temperature
+	//latest temperature in real time
 	const [DHT20Temp, setDHT20Temp] = useState(null);
 	useEffect(() => {
-		const fetchData = async () => {
-		const FEED_NAME = 'dht20-temp';
-		const result = await axios(
-			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
-			{
-			headers: {
-				'X-AIO-Key': AIO_KEY,
-			},
-			}
-		);
-		setDHT20Temp(result.data.value);
-		};
-		fetchData();
+		const intervalId = setInterval(() => {
+			const fetchData = async () => {
+				const FEED_NAME = 'dht20-temp';
+				const result = await axios(
+					`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
+					{
+					headers: {
+						'X-AIO-Key': AIO_KEY,
+					},
+					}
+				);
+				setDHT20Temp(result.data.value);
+				};
+				fetchData();
+		}, 1000)
+		return () => clearInterval(intervalId);
 	}, []);
 
-	//temperature line graph
+	//temperature line graph in real time
 	const [DHT20TempGraph, setDHT20TempGraph] = useState([]);
 	useEffect(() => {
-	  const FEED_NAME = 'dht20-temp';
-	  axios.get(`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?limit=20`)
-		.then(response => {
-		  const newData = response.data.map(item => ({
-			name: new Date(item.created_at).toLocaleTimeString(),
-			temperature_in_living_room: item.value,
-		  }));
-		  setDHT20TempGraph(newData);
-		})
+	  const intervalId = setInterval(() => {
+		const FEED_NAME = 'dht20-temp';
+		axios.get(`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?limit=20`)
+			.then(response => {
+			const newData = response.data.map(item => ({
+				name: new Date(item.created_at).toLocaleTimeString(),
+				temperature_in_living_room: item.value,
+			}));
+			setDHT20TempGraph(newData);
+			})
 		.catch(error => console.error(error));
-	}, [DHT20TempGraph]);
+	  }, 1000)
+	  return () => clearInterval(intervalId);
+	}, []);
 
-	//latest humidity
+	//latest humidity in real time
 	const [DHT20Humi, setDHT20Humi] = useState(null);
 	useEffect(() => {
-		const fetchData = async () => {
-		const FEED_NAME = 'dht20-humi';
-		const result = await axios(
-			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
-			{
-			headers: {
-				'X-AIO-Key': AIO_KEY,
-			},
-			}
-		);
-		setDHT20Humi(result.data.value);
-		};
-		fetchData();
+		const intervalId = setInterval(() => {
+			const fetchData = async () => {
+				const FEED_NAME = 'dht20-humi';
+				const result = await axios(
+					`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
+					{
+					headers: {
+						'X-AIO-Key': AIO_KEY,
+					},
+					}
+				);
+				setDHT20Humi(result.data.value);
+				};
+				fetchData();
+		}, 1000);
+		return () => clearInterval(intervalId);
 	}, []);
 
-	//humidity graph
+	//humidity graph in real time
 	const [DHT20HumiGraph, setDHT20HumiGraph] = useState([]);
 	useEffect(() => {
-	  const FEED_NAME = 'dht20-humi';
-	  axios.get(`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?limit=20`)
-		.then(response => {
-		  const newData = response.data.map(item => ({
-			name: new Date(item.created_at).toLocaleTimeString(),
-			humidity_in_living_room: item.value,
-		  }));
-		  setDHT20HumiGraph(newData);
-		})
+	  const intervalId = setInterval(() => {
+		const FEED_NAME = 'dht20-humi';
+		axios.get(`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?limit=20`)
+			.then(response => {
+			const newData = response.data.map(item => ({
+				name: new Date(item.created_at).toLocaleTimeString(),
+				humidity_in_living_room: item.value,
+			}));
+			setDHT20HumiGraph(newData);
+			})
 		.catch(error => console.error(error));
-	}, [DHT20HumiGraph]);
-
-	//lastest light
-	const [yoloLight, setYoloLight] = useState(null);
-	useEffect(() => {
-		const fetchData = async () => {
-		const FEED_NAME = 'yolo-light';
-		const result = await axios(
-			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
-			{
-			headers: {
-				'X-AIO-Key': AIO_KEY,
-			},
-			}
-		);
-		setYoloLight(result.data.value);
-		};
-		fetchData();
+	  }, 1000);
+	  return () => clearInterval(intervalId);
 	}, []);
 
-	//light graph
+	//lastest light in real time
+	const [yoloLight, setYoloLight] = useState(null);
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			const fetchData = async () => {
+				const FEED_NAME = 'yolo-light';
+				const result = await axios(
+					`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
+					{
+					headers: {
+						'X-AIO-Key': AIO_KEY,
+					},
+					}
+				);
+				setYoloLight(result.data.value);
+				};
+				fetchData();
+		}, 1000);
+		return () => clearInterval(intervalId);
+	}, []);
+
+	//light graph in real time
 	const [lightGraph, setLightGraph] = useState([]);
 	useEffect(() => {
-	  const FEED_NAME = 'yolo-light';
+	  const intervalId = setInterval(() => {
+		const FEED_NAME = 'yolo-light';
 	  axios.get(`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?limit=20`)
 		.then(response => {
 		  const newData = response.data.map(item => ({
@@ -138,7 +154,34 @@ const LivingRoomScreen = () => {
 		  setLightGraph(newData);
 		})
 		.catch(error => console.error(error));
-	}, [lightGraph]);
+	  }, 1000);
+	  return () => clearInterval(intervalId);
+	}, []);
+
+	//turn on/ off the led
+	const [ledValue, setLedValue] = useState(0);
+	const handleLedControl = async () => {
+		const FEED_NAME = 'yolo-pump'; //change this key
+		const data = ledValue===1? 0:1;
+		setLedValue(ledValue===1? 0:1);
+		toggleLed(!isLedToggled);
+		try {
+		  const response = await axios({
+			method: 'post',
+			url: `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data`,
+			headers: {
+			  'X-AIO-Key': AIO_KEY,
+			  'Content-Type': 'application/json',
+			},
+			data: {
+			  value: JSON.stringify(data),
+			},
+		  });
+		  console.log(response.data)
+		} catch (error) {
+		  console.error(error);
+		}
+	  };
 
 	return (
 		<div className="w-full h-[100%] bg-slate-200">
@@ -184,7 +227,7 @@ const LivingRoomScreen = () => {
 							<Line type="monotone" dataKey="temperature_in_living_room" stroke="#8884d8" activeDot={{ r: `10` }} />
 							</LineChart>
 						</div>
-						
+									
 						<div className="flex items-end w-full pt-3">
 							<img
 								src={require("../img/icons8-humidity-64 (1).png")}
@@ -246,7 +289,7 @@ const LivingRoomScreen = () => {
 						</div>
 					</div>
 
-					<div className="flex pb-12">
+					<div className="flex pb-12 mt-5">
 						<div className="w-[250px] h-[130px] bg-white z-20 rounded-3xl shadow-[0px_3px_6px_rgba(0,0,0,0.16),0px_3px_6px_rgba(0,0,0,0.23)] px-6 mx-auto">
 							<div className="w-full text-center text-2xl py-4">
 								Air Conditioner
@@ -278,6 +321,7 @@ const LivingRoomScreen = () => {
 								</div>
 							</div>
 						</div>
+						
 						<div className="w-[250px] h-[130px] bg-white z-20 rounded-3xl shadow-[0px_3px_6px_rgba(0,0,0,0.16),0px_3px_6px_rgba(0,0,0,0.23)] px-6 mx-auto">
 							<div className="w-full text-center text-2xl py-4">Led</div>
 							<div className="flex items-center justify-between w-full">
@@ -299,7 +343,7 @@ const LivingRoomScreen = () => {
 											className="td__toggle--input"
 											type="checkbox"
 											defaultChecked={isLedToggled}
-											onClick={() => toggleLed(!isLedToggled)}
+											onClick={handleLedControl}
 										/>
 										<span className="td__toggle--span" />
 										{/* <strong className="td__toggle--strong">Led</strong> */}
@@ -307,6 +351,7 @@ const LivingRoomScreen = () => {
 								</div>
 							</div>
 						</div>
+
 						<div className="w-[250px] h-[130px] bg-white z-20 rounded-3xl shadow-[0px_3px_6px_rgba(0,0,0,0.16),0px_3px_6px_rgba(0,0,0,0.23)] px-6 mx-auto">
 							<div className="w-full text-center text-2xl py-4">Fan</div>
 							<div className="flex items-center justify-between w-full">
