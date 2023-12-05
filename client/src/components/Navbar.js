@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+//Navbar
 const Navbar = () => {
 	return (
 		<div className=" bg-white w-full h-[80px] drop-shadow-xl z-20">
