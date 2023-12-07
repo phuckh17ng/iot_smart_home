@@ -3,15 +3,25 @@
 @tailwind utilities;
 
 body {
-	margin: 0;
-	font-family: "Alkatra", cursive;
-	/* font-family: "Noto Sans JP", sans-serif;
-	font-family: "Poppins", sans-serif; */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  /* font-family: "Alkatra", cursive; */
+  /* font-family: "Noto Sans JP", sans-serif;
+  font-family: "Poppins", sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-		monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 1500px) {
+  html {
+    font-size: 14px;
+  }
 }
