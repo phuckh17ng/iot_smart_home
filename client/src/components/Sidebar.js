@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FiHome, FiTrello } from "react-icons/fi";
+import NotificationCard from "./NotificationCard";
 
-const Sidebar = () => {
+const Sidebar = ({ tempPredictionData }) => {
   const sidebar = [
     {
       icon: (index) => {
@@ -67,6 +68,13 @@ const Sidebar = () => {
             </button>
           );
         })}
+      </div>
+      <div className="mt-3 text-white">
+        {tempPredictionData
+          ?.sort((a, b) => b.prediction - a.prediction)
+          ?.map((item, index) => {
+            return <NotificationCard key={index} data={item} />;
+          })}
       </div>
     </div>
   );
