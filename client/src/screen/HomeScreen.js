@@ -4,6 +4,7 @@ import { LiaTemperatureHighSolid } from "react-icons/lia";
 import { MdAccessTime, MdLightMode } from "react-icons/md";
 import { WiHumidity } from "react-icons/wi";
 
+import axios from "axios";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import {
 	Area,
@@ -74,8 +75,35 @@ const HomeScreen = ({
 		return () => tempPredictions();
 	}, [tempPrediction]);
 	console.log(tempPredictionData);
+
+	const sendToDevice = async () => {
+		await axios
+			.post(
+				`https://io.adafruit.com/api/v2/huynhngoctan/feeds/dclv.moto/data`,
+				{
+					datum: {
+						value: 1,
+					},
+				},
+				{
+					headers: {
+						"X-AIO-Key": "",
+					},
+				}
+			)
+			.then((response) => {
+				// setproduct(response.data)
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
 	return (
 		<div className="w-full grid grid-cols-6 gap-6 mt-3 px-6">
+			{/* <button type="button" onClick={sendToDevice}>
+				click
+			</button> */}
 			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
 				<div>
 					<div className="text-sm opacity-70">Temperature</div>
