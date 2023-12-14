@@ -11,7 +11,7 @@ import KitchenScreen from "./screen/KitchenScreen";
 import LivingRoomScreen from "./screen/LivingRoomScreen";
 function App() {
 	//fetch data from adafruit server
-	const AIO_KEY = "aio_Rsgu76sq602faWuk9IQhmApxFdsQ"; //zalo to get this key
+	const AIO_KEY = ""; //zalo to get this key
 	const AIO_USERNAME = "huynhngoctan";
 	//latest temperature in real time
 	const [temp, setTemp] = useState(null);
