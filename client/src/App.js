@@ -11,16 +11,18 @@ import KitchenScreen from "./screen/KitchenScreen";
 import LivingRoomScreen from "./screen/LivingRoomScreen";
 function App() {
 	//fetch data from adafruit server
-	const AIO_KEY = ""; //zalo to get this key
+	const AIO_KEY = "aio_Rsgu76sq602faWuk9IQhmApxFdsQ"; //zalo to get this key
 	const AIO_USERNAME = "huynhngoctan";
 	//latest temperature in real time
 	const [temp, setTemp] = useState(null);
 	const [humi, setHumi] = useState(null);
-	const [light, setLight] = useState(null);
+	const [gas, setGas] = useState(null);
+	const [rain, setRain] = useState(null);
 
 	const [tempGraph, setTempGraph] = useState([]);
 	const [humiGraph, setHumiGraph] = useState([]);
-	const [lightGraph, setLightGraph] = useState([]);
+	const [gasGraph, setGasGraph] = useState([]);
+	const [rainGraph, setRainGraph] = useState([]);
 
 	const [tempPredictionData, setTempPredictionData] = useState([]);
 	const fetchTempData = async () => {
@@ -34,7 +36,7 @@ function App() {
 			}
 		);
 		console.log(result);
-		setTemp(result.data.value);
+		setTemp(54);
 	};
 
 	const fetchHumiData = async () => {
@@ -51,7 +53,7 @@ function App() {
 		setHumi(result.data.value);
 	};
 
-	const fetchLightData = async () => {
+	const fetchGasData = async () => {
 		const FEED_NAME = "dclv.kitchen-gas";
 		const result = await axios(
 			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
@@ -62,7 +64,21 @@ function App() {
 			}
 		);
 		console.log(result);
-		setLight(result.data.value);
+		setGas(result.data.value);
+	};
+
+	const fetchRainData = async () => {
+		const FEED_NAME = "dclv.kitchen-rain";
+		const result = await axios(
+			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/last`,
+			{
+				headers: {
+					"X-AIO-Key": AIO_KEY,
+				},
+			}
+		);
+		console.log(result);
+		setRain(result.data.value);
 	};
 
 	const fetchTempGraph = async () => {
@@ -109,7 +125,7 @@ function App() {
 		setHumiGraph(newData);
 	};
 
-	const fetchLightGraph = async () => {
+	const fetchGasGraph = async () => {
 		const FEED_NAME = "dclv.kitchen-gas";
 		const result = await axios(
 			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/chart?hours=24&resolution=60`,
@@ -126,32 +142,59 @@ function App() {
 			}),
 			light_in_living_room: item[1],
 		}));
-		setLightGraph(newData);
+		setGasGraph(newData);
 	};
-	console.log(lightGraph);
+
+	const fetchRainGraph = async () => {
+		const FEED_NAME = "dclv.kitchen-rain";
+		const result = await axios(
+			`https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data/chart?hours=24&resolution=60`,
+			{
+				headers: {
+					"X-AIO-Key": AIO_KEY,
+				},
+			}
+		);
+		const newData = result.data.data.map((item) => ({
+			name: new Date(item[0]).toLocaleString("en-US", {
+				hour: "numeric",
+				hour12: true,
+			}),
+			rain_in_living_room: item[1],
+		}));
+		setRainGraph(newData);
+	};
+	console.log(gasGraph);
 
 	useEffect(() => {
 		fetchTempData();
 		fetchHumiData();
-		fetchLightData();
+		fetchGasData();
+		fetchRainData();
+
 		fetchTempGraph();
 		fetchHumiGraph();
-		fetchLightGraph();
+		fetchGasGraph();
+		fetchRainGraph();
+
 		const intervalId = setInterval(() => {
 			fetchTempData();
 			fetchHumiData();
-			fetchLightData();
+			fetchGasData();
+			fetchRainData();
+
 			fetchTempGraph();
 			fetchHumiGraph();
-			fetchLightData();
-		}, 36000);
+			fetchGasGraph();
+			fetchRainGraph();
+		}, 5000);
 		return () => clearInterval(intervalId);
 	}, []);
 
 	return (
 		<Router>
 			<div className="flex bg-[#eff3fb] min-h-screen">
-				<Sidebar />
+				<Sidebar tempPredictionData={tempPredictionData} />
 				<main className="App w-full">
 					<Navbar tempPredictionData={tempPredictionData} />
 					<div></div>
@@ -162,11 +205,13 @@ function App() {
 							element={
 								<HomeScreen
 									tempValue={temp}
-									lightValue={light}
+									gasValue={gas}
 									humiValue={humi}
+									rainValue={rain}
 									tempGraph={tempGraph}
 									humiGraph={humiGraph}
-									lightGraph={lightGraph}
+									gasGraph={gasGraph}
+									rainGraph={rainGraph}
 									setTempPredictionData={setTempPredictionData}
 									tempPredictionData={tempPredictionData}
 								/>
@@ -178,7 +223,7 @@ function App() {
 							element={
 								<LivingRoomScreen
 									tempValue={temp}
-									lightValue={light}
+									lightValue={gas}
 									humiValue={humi}
 								/>
 							}

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { FaCloudRain, FaFan, FaLightbulb } from "react-icons/fa";
+import { GiGasStove } from "react-icons/gi";
 import { IoIosTime } from "react-icons/io";
 import { LiaTemperatureHighSolid } from "react-icons/lia";
 import { MdAccessTime, MdLightMode } from "react-icons/md";
+import { PiEngineFill } from "react-icons/pi";
 import { WiHumidity } from "react-icons/wi";
 
 import axios from "axios";
@@ -9,6 +12,8 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import {
 	Area,
 	AreaChart,
+	Bar,
+	BarChart,
 	CartesianGrid,
 	Legend,
 	Line,
@@ -27,14 +32,17 @@ import { tempModelPredict } from "../ml-models/temp";
 const HomeScreen = ({
 	tempValue,
 	humiValue,
-	lightValue,
+	gasValue,
+	rainValue,
 	tempGraph,
 	humiGraph,
-	lightGraph,
+	gasGraph,
+	rainGraph,
 	tempPredictionData,
 	setTempPredictionData,
 }) => {
 	const currentDate = new Date();
+	const [isFanToggled, toggleFan] = useState(false);
 
 	const [currentTime, setCurrentTime] = useState(
 		currentDate.getHours() + " : " + currentDate.getMinutes()
@@ -52,29 +60,32 @@ const HomeScreen = ({
 	const [tempPrediction, setTempPrediction] = useState();
 	useEffect(() => {
 		if (tempValue) {
-			const temp = [[Number(70)]];
+			console.log(123123);
+			const temp = [[54]];
 			const result = tempModelPredict(temp);
+			console.log(result);
 			setTempPrediction(result);
 		}
-	}, [tempValue]);
+	}, []);
 
 	console.log("result", tempPrediction);
 	const fetchTempPrediction = async () => {
 		const data = await getTempPredictions();
 		setTempPredictionData(data);
 	};
-	console.log(tempPredictionData);
+
+	const tempPredictions = async () => {
+		if (!tempPrediction) return;
+		console.log("99999", tempPrediction);
+		await addTempPrediction("temperature", tempValue, tempPrediction[0]);
+		await fetchTempPrediction();
+	};
 	useEffect(() => {
 		fetchTempPrediction();
-
-		if (tempPrediction === 0 || !tempPrediction) return;
-		const tempPredictions = async () => {
-			addTempPrediction("temperature", tempValue, tempPrediction[0]);
-		};
-
-		return () => tempPredictions();
+		if (!tempPrediction) return;
+		if (tempPrediction[0] === 0) return;
+		tempPredictions();
 	}, [tempPrediction]);
-	console.log(tempPredictionData);
 
 	const sendToDevice = async () => {
 		await axios
@@ -101,12 +112,9 @@ const HomeScreen = ({
 	};
 	return (
 		<div className="w-full grid grid-cols-6 gap-6 mt-3 px-6">
-			{/* <button type="button" onClick={sendToDevice}>
-				click
-			</button> */}
 			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
 				<div>
-					<div className="text-sm opacity-70">Temperature</div>
+					<div className="text-sm opacity-70">Temperature Sensor</div>
 					<div className="text-lg font-bold">{tempValue} °C</div>
 				</div>
 				<div className="flex items-center justify-center p-1 rounded-xl bg-[#4ec7c2]">
@@ -115,7 +123,7 @@ const HomeScreen = ({
 			</div>
 			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
 				<div>
-					<div className="text-sm opacity-70">Humidity</div>
+					<div className="text-sm opacity-70">Humidity Sensor</div>
 					<div className="text-lg font-bold">{humiValue} %</div>
 				</div>
 				<div className="flex items-center justify-center p-1 rounded-xl bg-[#4ec7c2]">
@@ -124,15 +132,24 @@ const HomeScreen = ({
 			</div>
 			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
 				<div>
-					<div className="text-sm opacity-70">Light</div>
-					<div className="text-lg font-bold">{lightValue}</div>
+					<div className="text-sm opacity-70">Gas Sensor</div>
+					<div className="text-lg font-bold">{gasValue}</div>
 				</div>
 				<div className="flex items-center justify-center p-1 rounded-xl bg-[#4ec7c2]">
-					<MdLightMode color="#fff" size={30} />
+					<GiGasStove color="#fff" size={30} />
 				</div>
 			</div>
-			<div className="col-span-3 flex justify-end items-center">
-				<div className="w-1/2 rounded-xl px-4 py-6 shadow-slate-200 bg-white/10 shadow-lg flex items-center justify-between">
+			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
+				<div>
+					<div className="text-sm opacity-70">Rain Sensor</div>
+					<div className="text-lg font-bold">{rainValue}</div>
+				</div>
+				<div className="flex items-center justify-center p-2 rounded-xl bg-[#4ec7c2]">
+					<FaCloudRain color="#fff" size={22} />
+				</div>
+			</div>
+			<div className="col-span-2 flex justify-end items-center">
+				<div className="w-2/3 rounded-xl px-4 py-6 shadow-slate-200 bg-white/10 shadow-lg flex items-center justify-between">
 					<div className="font-semibold opacity-50 text-sm">
 						{currentDate.toDateString()}
 					</div>
@@ -144,7 +161,7 @@ const HomeScreen = ({
 					</div>
 				</div>
 			</div>
-			<div className="col-span-6 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
+			<div className="col-span-4 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
 				<p className="font-bold text-lg">Temperature Overview</p>
 				<p className="text-sm ml-1 mt-1">
 					<span className="opacity-70">in 24 hours</span>{" "}
@@ -186,6 +203,85 @@ const HomeScreen = ({
 							fill="url(#colorPv)"
 						/>
 					</AreaChart>
+				</div>
+			</div>
+			<div className="col-span-2 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
+				<p className="font-bold text-lg">Controller</p>
+				<div className="grid grid-cols-1 gap-x-6 mt-3 px-4">
+					<div className="col-span-1 w-full flex items-center justify-between border-b py-4">
+						<div className="flex items-center">
+							<div className="flex items-center justify-center p-2 rounded-xl bg-[#4ec7c2]">
+								<FaLightbulb color="#fff" />
+							</div>
+							<div className="ml-4 font-semibold opacity-70">Led</div>
+						</div>
+						<div className="flex items-center">
+							<div className="font-semibold">Off</div>
+							<div className="h-full ml-4">
+								<label className="block__toggle--btn">
+									<input className="td__toggle--input" type="checkbox" />
+									<span className="td__toggle--span" />
+								</label>
+							</div>
+						</div>
+					</div>
+					<div className="col-span-1 w-full flex items-center justify-between border-b py-4">
+						<div className="flex items-center">
+							<div className="flex items-center justify-center p-2 rounded-xl bg-[#4ec7c2]">
+								<FaFan color="#fff" />
+							</div>
+							<div className="ml-4 font-semibold opacity-70">Fan</div>
+						</div>
+						<div className="flex items-center">
+							<div className="font-semibold">Off</div>
+							<div className="h-full ml-4">
+								<label className="block__toggle--btn">
+									<input className="td__toggle--input" type="checkbox" />
+									<span className="td__toggle--span" />
+								</label>
+							</div>
+						</div>
+					</div>
+					<div className="col-span-1 w-full flex items-center justify-between border-b py-4">
+						<div className="flex items-center">
+							<div className="flex items-center justify-center p-2 rounded-xl bg-[#4ec7c2]">
+								<PiEngineFill color="#fff" />
+							</div>
+							<div className="ml-4 font-semibold opacity-70">Motor</div>
+						</div>
+						<div className="flex items-center">
+							<div className="font-semibold">On</div>
+							<div className="h-full ml-4">
+								<label className="block__toggle--btn">
+									<input className="td__toggle--input" type="checkbox" />
+									<span className="td__toggle--span" />
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="col-span-3 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
+				<p className="font-bold text-lg">Rain Sensor Overview</p>
+				<p className="text-sm ml-1 mt-1">
+					<span className="opacity-70">in 24 hours</span>{" "}
+					{/* <span className="font-semibold text-base">(%)</span>{" "} */}
+				</p>{" "}
+				<div className="mt-3 w-full grid overflow-hidden ml-[-1.5rem]">
+					<BarChart width={730} height={250} data={rainGraph}>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis
+							dataKey="name"
+							tickSize={16}
+							tickLine={false}
+							fontSize={14}
+						/>
+						<YAxis tickSize={16} tickLine={false} fontSize={14} />
+						{/* <Tooltip /> */}
+						{/* <Legend /> */}
+						<Bar dataKey="rain_in_living_room" fill="#8884d8" />
+						<Bar dataKey="uv" fill="#82ca9d" />
+					</BarChart>
 				</div>
 			</div>
 			<div className="col-span-3 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
@@ -233,13 +329,13 @@ const HomeScreen = ({
 				</div>
 			</div>
 			<div className="col-span-3 bg-white rounded-xl px-4 py-6 shadow-slate-200 shadow-lg">
-				<p className="font-bold text-lg">Light Overview</p>
+				<p className="font-bold text-lg">Gas Overview</p>
 				<p className="text-sm opacity-70 ml-1 mt-1">in 24 hours</p>
 				<div className="mt-3 w-full grid overflow-hidden ml-[-1rem]">
 					<AreaChart
 						width={1480}
 						height={250}
-						data={lightGraph}
+						data={gasGraph}
 						margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
 					>
 						<defs>

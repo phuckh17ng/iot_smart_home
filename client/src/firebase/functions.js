@@ -35,8 +35,9 @@ export const getTempPredictions = async () => {
 };
 
 export const addTempPrediction = async (label, value, prediction) => {
+	const date = new Date();
 	addDoc(collection(db, "notification"), {
-		date: new Date(),
+		date: date.toISOString(),
 		label: label,
 		value: value,
 		prediction: prediction,
