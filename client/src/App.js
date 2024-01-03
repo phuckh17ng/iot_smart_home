@@ -5,13 +5,14 @@ import Navbar from "./components/Navbar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
+import { getPredictions } from "./firebase/functions";
 import BedRoomScreen from "./screen/BedRoomScreen";
 import HomeScreen from "./screen/HomeScreen";
 import KitchenScreen from "./screen/KitchenScreen";
 import LivingRoomScreen from "./screen/LivingRoomScreen";
 function App() {
 	//fetch data from adafruit server
-	const AIO_KEY = ""; //zalo to get this key
+	const AIO_KEY = "aio_muad821e5hXvt1cUymqfnHJH60Ou"; //zalo to get this key
 	const AIO_USERNAME = "huynhngoctan";
 	//latest temperature in real time
 	const [temp, setTemp] = useState(null);
@@ -36,7 +37,7 @@ function App() {
 			}
 		);
 		console.log(result);
-		setTemp(54);
+		setTemp(Number(70));
 	};
 
 	const fetchHumiData = async () => {
@@ -166,6 +167,11 @@ function App() {
 	};
 	console.log(gasGraph);
 
+	const [predictions, setPredictions] = useState();
+	const fetchPredictions = async () => {
+		const result = await getPredictions();
+		setPredictions(result);
+	};
 	useEffect(() => {
 		fetchTempData();
 		fetchHumiData();
@@ -177,6 +183,7 @@ function App() {
 		fetchGasGraph();
 		fetchRainGraph();
 
+		fetchPredictions();
 		const intervalId = setInterval(() => {
 			fetchTempData();
 			fetchHumiData();
@@ -187,6 +194,8 @@ function App() {
 			fetchHumiGraph();
 			fetchGasGraph();
 			fetchRainGraph();
+
+			fetchPredictions();
 		}, 5000);
 		return () => clearInterval(intervalId);
 	}, []);
@@ -194,7 +203,10 @@ function App() {
 	return (
 		<Router>
 			<div className="flex bg-[#eff3fb] min-h-screen">
-				<Sidebar tempPredictionData={tempPredictionData} />
+				<Sidebar
+					tempPredictionData={tempPredictionData}
+					predictions={predictions}
+				/>
 				<main className="App w-full">
 					<Navbar tempPredictionData={tempPredictionData} />
 					<div></div>

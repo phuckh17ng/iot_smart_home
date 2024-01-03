@@ -2,7 +2,7 @@ import { RandomForestClassifier as RFClassifier } from "ml-random-forest";
 import { tempData } from "../data/dataset/temp";
 import { tempPredictions } from "../data/prediction/temp";
 
-export const tempModelPredict = (data) => {
+export const rainModelPredict = (data) => {
 	const trainingSet = tempData;
 	const predictions = tempPredictions;
 

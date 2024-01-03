@@ -34,6 +34,21 @@ export const getTempPredictions = async () => {
 	return data;
 };
 
+export const getPredictions = async () => {
+	var data = [];
+	const q = query(
+		collection(db, "notification"),
+		where("isChecked", "==", false)
+	);
+
+	const docs = await getDocs(q);
+	docs.forEach((doc) => {
+		data = [...data, doc?.data()];
+	});
+	console.log(data);
+	return data;
+};
+
 export const addTempPrediction = async (label, value, prediction) => {
 	const date = new Date();
 	addDoc(collection(db, "notification"), {

@@ -42,7 +42,9 @@ const HomeScreen = ({
 	setTempPredictionData,
 }) => {
 	const currentDate = new Date();
-	const [isFanToggled, toggleFan] = useState(false);
+	const [fanToggled, setFanToggled] = useState(false);
+	const [ledToggled, setLedToggled] = useState(false);
+	const [motorToggled, setMotorToggled] = useState(false);
 
 	const [currentTime, setCurrentTime] = useState(
 		currentDate.getHours() + " : " + currentDate.getMinutes()
@@ -61,12 +63,12 @@ const HomeScreen = ({
 	useEffect(() => {
 		if (tempValue) {
 			console.log(123123);
-			const temp = [[54]];
+			const temp = [[tempValue]];
 			const result = tempModelPredict(temp);
 			console.log(result);
 			setTempPrediction(result);
 		}
-	}, []);
+	}, [tempValue]);
 
 	console.log("result", tempPrediction);
 	const fetchTempPrediction = async () => {
@@ -76,7 +78,6 @@ const HomeScreen = ({
 
 	const tempPredictions = async () => {
 		if (!tempPrediction) return;
-		console.log("99999", tempPrediction);
 		await addTempPrediction("temperature", tempValue, tempPrediction[0]);
 		await fetchTempPrediction();
 	};
@@ -87,18 +88,18 @@ const HomeScreen = ({
 		tempPredictions();
 	}, [tempPrediction]);
 
-	const sendToDevice = async () => {
+	const sendToDevice = async (value) => {
 		await axios
 			.post(
 				`https://io.adafruit.com/api/v2/huynhngoctan/feeds/dclv.moto/data`,
 				{
 					datum: {
-						value: 1,
+						value: value,
 					},
 				},
 				{
 					headers: {
-						"X-AIO-Key": "",
+						"X-AIO-Key": "aio_muad821e5hXvt1cUymqfnHJH60Ou",
 					},
 				}
 			)
@@ -110,6 +111,20 @@ const HomeScreen = ({
 				console.log(error);
 			});
 	};
+
+	const handleToggleMotor = async () => {
+		setMotorToggled(!motorToggled);
+	};
+
+	useEffect(() => {
+		if (!motorToggled) {
+			sendToDevice(0);
+		}
+		if (motorToggled) {
+			sendToDevice(1);
+		}
+	}, [motorToggled]);
+
 	return (
 		<div className="w-full grid grid-cols-6 gap-6 mt-3 px-6">
 			<div className="col-span-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between shadow-slate-200 shadow-lg">
@@ -216,10 +231,15 @@ const HomeScreen = ({
 							<div className="ml-4 font-semibold opacity-70">Led</div>
 						</div>
 						<div className="flex items-center">
-							<div className="font-semibold">Off</div>
+							<div className="font-semibold">{ledToggled ? "On" : "Off"}</div>
 							<div className="h-full ml-4">
 								<label className="block__toggle--btn">
-									<input className="td__toggle--input" type="checkbox" />
+									<input
+										className="td__toggle--input"
+										type="checkbox"
+										defaultChecked={ledToggled}
+										onClick={() => setLedToggled(!ledToggled)}
+									/>
 									<span className="td__toggle--span" />
 								</label>
 							</div>
@@ -233,10 +253,15 @@ const HomeScreen = ({
 							<div className="ml-4 font-semibold opacity-70">Fan</div>
 						</div>
 						<div className="flex items-center">
-							<div className="font-semibold">Off</div>
+							<div className="font-semibold">{fanToggled ? "On" : "Off"}</div>
 							<div className="h-full ml-4">
 								<label className="block__toggle--btn">
-									<input className="td__toggle--input" type="checkbox" />
+									<input
+										className="td__toggle--input"
+										type="checkbox"
+										defaultChecked={fanToggled}
+										onClick={() => setFanToggled(!fanToggled)}
+									/>
 									<span className="td__toggle--span" />
 								</label>
 							</div>
@@ -250,10 +275,15 @@ const HomeScreen = ({
 							<div className="ml-4 font-semibold opacity-70">Motor</div>
 						</div>
 						<div className="flex items-center">
-							<div className="font-semibold">On</div>
+							<div className="font-semibold">{motorToggled ? "On" : "Off"}</div>
 							<div className="h-full ml-4">
 								<label className="block__toggle--btn">
-									<input className="td__toggle--input" type="checkbox" />
+									<input
+										className="td__toggle--input"
+										type="checkbox"
+										defaultChecked={motorToggled}
+										onClick={handleToggleMotor}
+									/>
 									<span className="td__toggle--span" />
 								</label>
 							</div>

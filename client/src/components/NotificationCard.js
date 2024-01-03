@@ -1,10 +1,10 @@
 import moment from "moment";
 import React, { useState } from "react";
-import { FiX } from "react-icons/fi";
+import { FiAlertCircle, FiX } from "react-icons/fi";
 import { checkNotification } from "../firebase/functions";
 
 const NotificationCard = ({ data }) => {
-	console.log(data.date);
+	console.log(data.label);
 	const [isChecked, setIsChecked] = useState(false);
 	const handleCheck = async () => {
 		await checkNotification(data.label, data.value, data.date);
@@ -12,18 +12,22 @@ const NotificationCard = ({ data }) => {
 	};
 	if (Number(data.prediction) === 2 && !isChecked) {
 		return (
-			<div className="bg-red-500/95 rounded-xl px-3 py-2 mt-3 shadow-lg">
+			<div className="bg-[#20315c] rounded-xl px-3 py-2 mt-3 shadow-lg">
 				<div className="font-bold flex justify-between items-center">
-					<span>Danger</span>
+					<div className="flex items-center">
+						<FiAlertCircle color="#c1363f" size={20} />{" "}
+						<div className="ml-2">Danger</div>
+					</div>
 					<button type="button" onClick={handleCheck}>
-						<FiX />
+						<FiX size={20} />
 					</button>
 				</div>
-				<div className="text-xs">
+				<div className="text-xs opacity-50">
 					{moment(data.date).format("DD MMM YYYY, hh:mm A")}
 				</div>
-				<div className="text-base mt-4 font-semibold">
-					House's {data.label} is {data.value} °C
+				<div className="text-sm mt-4 font-semibold">
+					House's {data.label} is {data.value}
+					{data.label === "temperature" && "°C"}
 				</div>
 				{/* <div>{data.value}</div> */}
 			</div>
@@ -32,19 +36,22 @@ const NotificationCard = ({ data }) => {
 
 	if (Number(data.prediction) === 1 && !isChecked) {
 		return (
-			<div className="bg-orange-500 rounded-xl px-3 py-2 mt-2">
+			<div className="bg-[#20315c] rounded-xl px-3 py-2 mt-3 shadow-lg">
 				<div className="font-bold flex justify-between items-center">
-					<span>Warning</span>
+					<div className="flex items-center">
+						<FiAlertCircle color="#a17d4e" size={20} />{" "}
+						<div className="ml-2">Warning</div>
+					</div>
 					<button type="button" onClick={handleCheck}>
-						<FiX />
+						<FiX size={20} />
 					</button>
 				</div>
-				<div className="text-xs">
+				<div className="text-xs opacity-50">
 					{moment(data.date).format("DD MMM YYYY, hh:mm A")}
 				</div>
-
-				<div className="text-base mt-4 font-semibold">
-					House's {data.label} is {data.value} °C
+				<div className="text-sm mt-4 font-semibold">
+					House's {data.label} is {data.value}
+					{data.label === "temperature" && "°C"}
 				</div>
 				{/* <div>{data.value}</div> */}
 			</div>
